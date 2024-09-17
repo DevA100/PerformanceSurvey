@@ -1,0 +1,90 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PerformanceSurvey.iServices;
+using PerformanceSurvey.Models.DTOs;
+
+[ApiController]
+[Route("api/Response")]
+public class ResponsesController : ControllerBase
+{
+    private readonly IResponseService _responseService;
+
+    public ResponsesController(IResponseService responseService)
+    {
+        _responseService = responseService;
+    }
+    [Authorize(Roles = "Users")]
+    [HttpPost("saveMultipleChoiceResponse")]
+    public async Task<IActionResult> SaveResponse([FromBody] SaveMultipleChoiceResponseDto dto)
+    {
+        try
+        {
+            await _responseService.SaveResponseAsync(dto);
+            return Ok(new { message = "Response saved successfully" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+    [Authorize(Roles = "Users")]
+    [HttpPost("saveTextResponse")]
+    public async Task<IActionResult> SaveTextResponse([FromBody] SaveTextResponseDto textResponseDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            var result = await _responseService.SaveTextResponseAsync(textResponseDto);
+             return Ok(new { message = "Response saved successfully" });
+        }
+        catch (Exception ex)
+        {
+            // Log exception
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+    [Authorize(Roles = "Admin")]
+    [HttpGet("by-department/{departmentId}")]
+    public async Task<IActionResult> GetResponsesByDepartmentId(int departmentId)
+    {
+        var responses = await _responseService.GetResponsesByDepartmentIdAsync(departmentId);
+        return Ok(responses);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("clear-by-department/{departmentId}")]
+    public async Task<IActionResult> ClearResponsesByDepartment(int departmentId)
+    {
+        await _responseService.ClearResponsesByDepartmentIdAsync(departmentId);
+        return Ok("Responses cleared for department " + departmentId);
+    }
+
+    // Endpoint to clear all responses
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("clear-all")]
+    public async Task<IActionResult> ClearAllResponses()
+    {
+        await _responseService.ClearAllResponsesAsync();
+        return Ok("All responses cleared.");
+    }
+
+    // Endpoint to download responses by departmentId or all responses if departmentId is not provided
+    [Authorize(Roles = "Admin")]
+    [HttpGet("download")]
+    public async Task<IActionResult> DownloadResponses([FromQuery] int? departmentId = null)
+    {
+        var fileBytes = await _responseService.ExportResponsesToExcelAsync(departmentId);
+
+        string fileName = departmentId.HasValue
+            ? $"Responses_Department_{departmentId.Value}.xlsx"
+            : "All_Responses.xlsx";
+
+        return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+    }
+
+    // Additional actions for generating reports can be added here
+}

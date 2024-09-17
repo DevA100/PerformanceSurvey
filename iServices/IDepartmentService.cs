@@ -1,0 +1,14 @@
+﻿using PerformanceSurvey.Models;
+using PerformanceSurvey.Models.DTOs;
+
+namespace PerformanceSurvey.iServices
+{
+    public interface IDepartmentService
+    {
+        Task<DepartmentDto> CreateDepartmentAsync(DepartmentDto departmentDto);
+        Task<DepartmentDto> GetDepartmentByIdAsync(int id);
+        Task<IEnumerable<DepartmentDto>> GetAllDepartmentsAsync();
+        Task<DepartmentDto> UpdateDepartmentAsync(int id, DepartmentDto departmentDto);
+        Task<bool> DisableDepartmentAsync(int id);
+    }
+}

@@ -1,0 +1,138 @@
+﻿using PerformanceSurvey.Models.DTOs.ResponseDTOs;
+using PerformanceSurvey.Models.DTOs;
+using PerformanceSurvey.Models;
+using PerformanceSurvey.iServices;
+using PerformanceSurvey.Utilities;
+using PerformanceSurvey.iRepository;
+using PerformanceSurvey.Repository;
+using System.Security.Cryptography;
+using System.Text;
+
+namespace PerformanceSurvey.Services
+{
+    public class AuthLoginService : IAuthLoginService
+    {
+        private readonly IAuthLoginRepository _authLoginRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IEmailService _emailService;
+        private readonly JwtTokenUtil _jwtTokenUtil;
+
+        public AuthLoginService(IAuthLoginRepository authLoginRepository, JwtTokenUtil jwtTokenUtil, IUserRepository userRepository, IEmailService emailService)
+        {
+            _authLoginRepository = authLoginRepository;
+            _emailService = emailService;
+            _userRepository = userRepository;
+            _jwtTokenUtil = jwtTokenUtil;
+        }
+
+        public async Task<CreateAdminUserResponse> CreateAdminUserAsync(CreateAdminUserRequest adminUserDto)
+        {
+            // Hash the provided password
+            var hashedPassword = HashPassword(adminUserDto.Password);
+
+            // Create the admin user entity
+            var adminUser = new User
+            {
+                Name = adminUserDto.Name,
+                UserEmail = adminUserDto.UserEmail,
+                Password = hashedPassword,
+                UserType = UserType.AdminUser,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                IsDisabled = false // Set initial status
+            };
+
+            // Save admin user to the database
+            await _authLoginRepository.CreateAdminUserAsync(adminUser);
+
+            // Send email to the newly created admin
+            var emailSubject = "Admin Account Created";
+            var emailBody = $"Hello {adminUser.Name},\n\nYour admin account has been created successfully. Here are your login details:\n\nEmail: {adminUser.UserEmail}\nPassword: {adminUserDto.Password}";
+
+            // Use the email service to send the email
+            await _emailService.SendEmailAsync(adminUser.UserEmail, emailSubject, emailBody);
+
+            // Map to UserDto and return
+            return new CreateAdminUserResponse
+            {
+                Name = adminUser.Name,
+                UserEmail = adminUser.UserEmail,
+                Password = adminUserDto.Password,
+            };
+        }
+
+
+        public async Task<AuthenticateAdminDto> AuthenticateAdminUserAsync(string email, string password)
+        {
+            // Fetch user by email
+            var user = await _userRepository.GetUserByEmailAsync(email);
+            if (user == null || user.UserType != UserType.AdminUser)
+            {
+                return null; // Return null if user is not found or not an admin
+            }
+
+            // Verify the password
+            var hashedInputPassword = HashPassword(password);
+            if (user.Password != hashedInputPassword)
+            {
+                return null; // Return null if password does not match
+            }
+
+            var token = _jwtTokenUtil.GenerateToken(email, "Admin");
+            // Return user DTO
+            return new AuthenticateAdminDto
+            {
+                Token = token,
+                IssuedOn = DateTime.UtcNow,
+                ExpiredAt = DateTime.UtcNow .AddMinutes(60),
+            };
+        }
+
+        public async Task<AuthenticateAdminDto> AuthenticateUserAsync(string email, string password)
+        {
+            // Step 1: Retrieve the user by email
+            var user = await _userRepository.GetUserByEmailAsync(email);
+            if (user == null || user.UserType == UserType.AdminUser)
+            {
+                return null; // User not found
+            }
+
+            // Step 2: Verify the password by hashing the input and comparing it with the stored hash
+            var hashedInputPassword = HashPassword(password);
+            if (user.Password != hashedInputPassword)
+            {
+                return null; // Password does not match
+            }
+
+            var token = _jwtTokenUtil.GenerateToken(email, "Users");
+
+            // Step 3: Return the user if authentication is successful
+            return new AuthenticateAdminDto
+            {
+                Token = token,
+                IssuedOn = DateTime.UtcNow,
+                ExpiredAt = DateTime.UtcNow.AddMinutes(60),
+            };
+        }
+
+        // HashPassword method should be the same as the one used during password generation
+        private string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var bytes = Encoding.UTF8.GetBytes(password);
+                var hash = sha256.ComputeHash(bytes);
+                return Convert.ToBase64String(hash);
+            }
+        }
+
+
+
+        public async Task RevokeTokenAsync(string token)
+        {
+            await _authLoginRepository.RevokeTokenAsync(token);
+        }
+    }
+
+}
+

@@ -1,0 +1,16 @@
+﻿using PerformanceSurvey.Models;
+
+namespace PerformanceSurvey.iRepository
+{
+    public interface IAssignmentQuestionRepository
+    {
+        Task AssignQuestionsToMultipleUsersAsync(List<AssignmentQuestion> assignments);
+        Task AssignQuestionsToDepartmentAsync(List<AssignmentQuestion> assignments);
+        Task AssignDiffQuestionsToDepartmentAsync(List<AssignmentQuestion> assignments);
+        Task AssignDiffQuestionsToDiffDepartmentAsync(List<AssignmentQuestion> assignments);
+        Task AssignQuestionsToSingleUsersAsync(List<AssignmentQuestion> assignments);
+        Task<IEnumerable<AssignmentQuestion>> GetAssignmentByUserIdAsync(int  userId);
+
+        Task<IEnumerable<AssignmentQuestion>> GetAssignmentByUserIdsAsync(IEnumerable<int> userIds);
+    }
+}
