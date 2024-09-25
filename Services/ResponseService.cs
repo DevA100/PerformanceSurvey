@@ -128,8 +128,8 @@ namespace PerformanceSurvey.Services
 
             // Add header
             worksheet.Cells[1, 1].Value = "ResponseId";
-            worksheet.Cells[1, 2].Value = "QuestionId";
-            worksheet.Cells[1, 3].Value = "DepartmentId";
+           // worksheet.Cells[1, 2].Value = "QuestionId";
+            //worksheet.Cells[1, 3].Value = "DepartmentId";
             worksheet.Cells[1, 4].Value = "DepartmentName";
             worksheet.Cells[1, 5].Value = "QuestionText"; // Fixed index
             worksheet.Cells[1, 6].Value = "ResponseText";
@@ -142,8 +142,8 @@ namespace PerformanceSurvey.Services
             foreach (var response in responses)
             {
                 worksheet.Cells[row, 1].Value = response.ResponseId;
-                worksheet.Cells[row, 2].Value = response.QuestionId;
-                worksheet.Cells[row, 3].Value = response.DepartmentId;
+                //worksheet.Cells[row, 2].Value = response.QuestionId;
+                //worksheet.Cells[row, 3].Value = response.DepartmentId;
                 worksheet.Cells[row, 4].Value = response.Question?.Department?.DepartmentName ?? "Unknown";
                 worksheet.Cells[row, 5].Value = response.Question?.QuestionText ?? "No question text";
                 worksheet.Cells[row, 6].Value = response.ResponseText;

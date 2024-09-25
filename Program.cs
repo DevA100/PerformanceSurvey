@@ -225,12 +225,15 @@ namespace PerformanceSurvey
 
             });
             var app = builder.Build();
-
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "PerformanceSurvey API V1");
+                });
             }
             app.UseMiddleware<TokenRevocationMiddleware>();
             app.UseHttpsRedirection();
@@ -240,7 +243,7 @@ namespace PerformanceSurvey
 
 
             app.MapControllers();
-
+            //app.Urls.Add("https://*:8080");
             app.Run();
         }
     }
