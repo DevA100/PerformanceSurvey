@@ -236,7 +236,7 @@ namespace PerformanceSurvey
                 });
             }
             app.UseMiddleware<TokenRevocationMiddleware>();
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseRouting(); // Ensure routing is used
             app.UseAuthentication();
             app.UseAuthorization();
