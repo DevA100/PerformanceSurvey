@@ -226,15 +226,21 @@ namespace PerformanceSurvey
             });
             var app = builder.Build();
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
+            //if (app.Environment.IsDevelopment())
+            
+                //app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "PerformanceSurvey API V1");
                 });
-            }
+            
+            //app.UseSwagger();
+            //app.UseSwaggerUI(c =>
+            //{
+            //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            //    c.RoutePrefix = string.Empty; // This makes the Swagger UI load at the root URL
+            //});
             app.UseMiddleware<TokenRevocationMiddleware>();
             //app.UseHttpsRedirection();
             app.UseRouting(); // Ensure routing is used
