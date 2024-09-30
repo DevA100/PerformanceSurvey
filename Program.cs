@@ -46,6 +46,16 @@ namespace PerformanceSurvey
                     // options.JsonSerializerOptions.MaxDepth = 64;
                 });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin()  // Allow all origins
+                              .AllowAnyHeader()  // Allow any headers
+                              .AllowAnyMethod(); // Allow any HTTP methods
+                    });
+            });
 
 
             // Register repositories
@@ -234,13 +244,15 @@ namespace PerformanceSurvey
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "PerformanceSurvey API V1");
                 });
-            
+
             //app.UseSwagger();
             //app.UseSwaggerUI(c =>
             //{
             //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             //    c.RoutePrefix = string.Empty; // This makes the Swagger UI load at the root URL
             //});
+            app.UseCors("AllowSpecificOrigins");
+
             app.UseMiddleware<TokenRevocationMiddleware>();
             //app.UseHttpsRedirection();
             app.UseRouting(); // Ensure routing is used
