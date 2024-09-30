@@ -4,7 +4,7 @@ using PerformanceSurvey.Models.DTOs;
 
 namespace PerformanceSurvey.Controllers
 {
-    [Route("api/AuthLogin")]
+    [Route("api/PerformanceSurvey")]
     [ApiController]
     public class AuthLoginController : Controller
     {

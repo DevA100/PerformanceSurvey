@@ -5,7 +5,7 @@ using PerformanceSurvey.Models.DTOs;
 
 namespace PerformanceSurvey.Controllers
 {
-    [Route("api/AssignQuestion")]
+    [Route("api/PerformanceSurvey")]
     [ApiController]
     public class AssignmentQuestionController : ControllerBase
     {
@@ -19,7 +19,7 @@ namespace PerformanceSurvey.Controllers
 
         [Authorize(Roles = "Admin")]
         // POST: api/AssignmentQuestion/AssignMultipleQuestionsToMultipleUsers
-        [HttpPost("AssignToSingleUser")]
+        [HttpPost("AssignQuestionsToSingleUser")]
         public async Task<IActionResult> AssignQuestionsToSingleUser([FromBody] AssignmentQuestionSingleUserDto assignmentQuestionSingleUserDto)
         {
             if (assignmentQuestionSingleUserDto == null)
@@ -41,7 +41,7 @@ namespace PerformanceSurvey.Controllers
 
         [Authorize(Roles = "Admin")]
         // POST: api/AssignmentQuestion/AssignToMultipleUsers
-        [HttpPost("AssignToMultipleUsers")]
+        [HttpPost("AssignQuestionsToMultipleUsers")]
         public async Task<IActionResult> AssignQuestionsToMultipleUsers([FromBody] AssignmentQuestionMultipleDto assignmentQuestionMultipleDto)
         {
             if (assignmentQuestionMultipleDto == null)
@@ -63,7 +63,7 @@ namespace PerformanceSurvey.Controllers
 
         [Authorize(Roles = "Admin")]
         // POST: api/AssignmentQuestion/AssignToDepartment
-        [HttpPost("AssignToDepartment")]
+        [HttpPost("AssignQuestionsToDepartment")]
         public async Task<IActionResult> AssignQuestionsToDepartment([FromBody] AssignQuestionsToDepartmentDto assignmentQuestionMultipleDto)
         {
             if (assignmentQuestionMultipleDto == null)

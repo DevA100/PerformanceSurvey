@@ -9,7 +9,7 @@ using PerformanceSurvey.Models.RequestDTOs.ResponseDTOs;
 
 namespace PerformanceSurvey.Controllers
 {
-    [Route("api/Question")]
+    [Route("api/PerformanceSurvey")]
     [ApiController]
     public class QuestionController : ControllerBase
     {
@@ -22,7 +22,7 @@ namespace PerformanceSurvey.Controllers
             _logger = logger;
         }
         [Authorize(Roles = "Admin")]
-        [HttpPost("CreateMultipleChoice")]
+        [HttpPost("CreateMultipleChoiceQuestions")]
         public async Task<ActionResult<MultipleChoiceQuestionResponse>> CreateDepartmentMultipleQuestionAsync(MultipleChoiceQuestionRequest questionDto)
         {
             _logger.LogInformation("Creating a new question");
@@ -32,7 +32,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("CreateText")]
+        [HttpPost("CreateTextQuestions")]
         public async Task<ActionResult<Question>> CreateDepartmentTextQuestionAsync(TextQuestionReqest questionDto)
         {
             _logger.LogInformation("Creating a new question");
@@ -42,7 +42,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("get/{id}")]
+        [HttpGet("getQuestionsById/{id}")]
         public async Task<ActionResult<Question>> GetDepartmentQuestion(int id)
         {
             var question = await _service.GetDepartmentQuestionAsync(id);
@@ -55,7 +55,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("getAll")]
+        [HttpGet("getAllQuestions")]
         public async Task<ActionResult<IEnumerable<Question>>> GetAllDepartmentQuestions()
         {
             var questions = await _service.GetAllDepartmentQuestionsAsync();
@@ -64,7 +64,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpPut("updateMultipleChoice/{id}")]
+        [HttpPut("updateMultipleChoiceQuestions/{id}")]
         public async Task<ActionResult<Question>> UpdateDepartmentMultipleChoiceQuestion(int id, MultipleChoiceQuestionRequest questionDto)
         {
             var updatedQuestion = await _service.UpdateDepartmentMultipleChoiceQuestionAsync(id, questionDto);
@@ -78,7 +78,7 @@ namespace PerformanceSurvey.Controllers
 
         [Authorize(Roles = "Admin")]
         // GET: api/QuestionOption/{optionId}
-        [HttpGet("QuestionOption{optionId}")]
+        [HttpGet("QuestionOptionById{optionId}")]
         public async Task<IActionResult> GetOptionById(int optionId)
         {
             var option = await _service.GetOptionByIdAsync(optionId);
@@ -91,7 +91,7 @@ namespace PerformanceSurvey.Controllers
 
         [Authorize(Roles = "Admin")]
         // GET: api/QuestionOption
-        [HttpGet("QuestionOption")]
+        [HttpGet("GetAllQuestionOption")]
         public async Task<IActionResult> GetAllOptions()
         {
             var options = await _service.GetAllOptionsAsync();
@@ -113,7 +113,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("deleteQuestionById/{id}")]
         public async Task<ActionResult<Question>> DeleteDepartmentQuestion(int id)
         {
             var question = await _service.DeleteDepartmentQuestionAsync(id);
@@ -126,7 +126,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("QuestionbyDepartment/{departmentId}")]
+        [HttpGet("QuestionsByDepartmentId/{departmentId}")]
         public async Task<ActionResult<IEnumerable<QuestionDto>>> GetDepartmentQuestionsByDepartmentId(int departmentId)
         {
             _logger.LogInformation("Fetching questions for department ID {DepartmentId}", departmentId);
@@ -140,7 +140,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("QuestionsbyDepartments")]
+        [HttpGet("QuestionsByDepartmentIds")]
         public async Task<IActionResult> GetQuestionsByDepartmentIds([FromQuery] List<int> departmentIds)
         {
             if (departmentIds == null || departmentIds.Count == 0)

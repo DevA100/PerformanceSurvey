@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace PerformanceSurvey.Controllers
 {
-    [Route("api/Department/")]
+    [Route("api/PerformanceSurvey/")]
     [ApiController]
     public class DepartmentController : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("Create")]
+        [HttpPost("CreateDepartment")]
         public async Task<ActionResult<Department>> CreateDepartment(DepartmentDto request)
         {
             var department = await _departmentService.CreateDepartmentAsync(request);
@@ -34,7 +34,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("{id}")]
+        [HttpGet("DepartmentById{id}")]
         public async Task<ActionResult<DepartmentDto>> GetDepartmentByIdAsync(int id)
         {
             var departmentDto = await _departmentService.GetDepartmentByIdAsync(id);
@@ -47,7 +47,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpPut("update/{id}")]
+        [HttpPut("updateDepartmentById/{id}")]
         public async Task<ActionResult<Department>> UpdateDepartment(int id, DepartmentDto departmentDto)
         {
             var department = await _departmentService.UpdateDepartmentAsync(id, departmentDto);
@@ -60,7 +60,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("getAll")]
+        [HttpGet("getAllDepartment")]
         public async Task<ActionResult<IEnumerable<Department>>> GetDepartments()
         {
             var departments = await _departmentService.GetAllDepartmentsAsync();
@@ -69,7 +69,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("disable/{id}")]
+        [HttpDelete("disableDepartmentById/{id}")]
         public async Task<ActionResult> DisableDepartmentAsync(int id)
         {
             var result = await _departmentService.DisableDepartmentAsync(id);

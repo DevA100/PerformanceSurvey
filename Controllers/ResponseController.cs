@@ -4,7 +4,7 @@ using PerformanceSurvey.iServices;
 using PerformanceSurvey.Models.DTOs;
 
 [ApiController]
-[Route("api/Response")]
+[Route("api/PerformanceSurvey")]
 public class ResponsesController : ControllerBase
 {
     private readonly IResponseService _responseService;
@@ -48,7 +48,7 @@ public class ResponsesController : ControllerBase
         }
     }
     [Authorize(Roles = "Admin")]
-    [HttpGet("by-department/{departmentId}")]
+    [HttpGet("ResponseBy-departmentId/{departmentId}")]
     public async Task<IActionResult> GetResponsesByDepartmentId(int departmentId)
     {
         var responses = await _responseService.GetResponsesByDepartmentIdAsync(departmentId);
@@ -56,7 +56,7 @@ public class ResponsesController : ControllerBase
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpDelete("clear-by-department/{departmentId}")]
+    [HttpDelete("clearResponse-by-departmentId/{departmentId}")]
     public async Task<IActionResult> ClearResponsesByDepartment(int departmentId)
     {
         await _responseService.ClearResponsesByDepartmentIdAsync(departmentId);
@@ -65,7 +65,7 @@ public class ResponsesController : ControllerBase
 
     // Endpoint to clear all responses
     [Authorize(Roles = "Admin")]
-    [HttpDelete("clear-all")]
+    [HttpDelete("clear-all Responses")]
     public async Task<IActionResult> ClearAllResponses()
     {
         await _responseService.ClearAllResponsesAsync();
@@ -74,7 +74,7 @@ public class ResponsesController : ControllerBase
 
     // Endpoint to download responses by departmentId or all responses if departmentId is not provided
     [Authorize(Roles = "Admin")]
-    [HttpGet("download")]
+    [HttpGet("downloadResults")]
     public async Task<IActionResult> DownloadResponses([FromQuery] int? departmentId = null)
     {
         var fileBytes = await _responseService.ExportResponsesToExcelAsync(departmentId);

@@ -3,7 +3,7 @@ using PerformanceSurvey.iServices;
 
 namespace PerformanceSurvey.Controllers
 {
-    [Route("api/Email")]
+    [Route("api/PerformanceSurvey")]
     [ApiController]
     public class EmailController : ControllerBase
     {
@@ -14,7 +14,7 @@ namespace PerformanceSurvey.Controllers
             _emailService = emailService;
         }
 
-        [HttpPost("send")]
+        [HttpPost("sendEmail")]
         public async Task<IActionResult> SendEmail([FromBody] EmailRequest request)
         {
             if (string.IsNullOrEmpty(request.ToEmail) || string.IsNullOrEmpty(request.Subject) || string.IsNullOrEmpty(request.Body))

@@ -9,7 +9,7 @@ using PerformanceSurvey.Models.DTOs.ResponseDTOs;
 
 namespace PerformanceSurvey.Controllers
 {
-    [Route("api/Users")]
+    [Route("api/PerformanceSurvey")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -24,7 +24,7 @@ namespace PerformanceSurvey.Controllers
         }
         [Authorize(Roles = "Admin")]
 
-        [HttpPost("Create")]
+        [HttpPost("CreateUsers")]
         public async Task<ActionResult<UserRequest>> CreateUserAsync([FromBody] UserRequest userDto)
         {
             try
@@ -52,7 +52,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("get/{id}")]
+        [HttpGet("UsersById/{id}")]
         public async Task<ActionResult<UserResponse>> GetUserByIdAsync(int id)
         {
             var userDto = await _userService.GetUserByIdAsync(id);
@@ -105,7 +105,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpPut("update/{id}")]
+        [HttpPut("updateUserById/{id}")]
         public async Task<IActionResult> UpdateUserAsync(int id, [FromBody] UserRequest userDto)
         {
             try
@@ -126,7 +126,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("getAll")]
+        [HttpGet("getAllUsers")]
         public async Task<ActionResult<IEnumerable<UserRequest>>> GetAllUsersAsync()
         {
             var users = await _userService.GetAllUsersAsync();
@@ -135,7 +135,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("disable/{id}")]
+        [HttpDelete("disableUsersById/{id}")]
         public async Task<IActionResult> DisableUser(int id)
         {
             var result = await _userService.DisableUserAsync(id);
@@ -148,7 +148,7 @@ namespace PerformanceSurvey.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("userbydepartment/{departmentId}")]
+        [HttpGet("userByDepartmentId/{departmentId}")]
         public async Task<ActionResult<IEnumerable<UserRequest>>> GetUsersByDepartmentIdAsync(int departmentId)
         {
             var users = await _userService.GetUsersByDepartmentIdAsync(departmentId);
