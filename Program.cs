@@ -251,7 +251,7 @@ namespace PerformanceSurvey
             //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             //    c.RoutePrefix = string.Empty; // This makes the Swagger UI load at the root URL
             //});
-            app.UseCors("AllowSpecificOrigins");
+            app.UseCors("AllowAllOrigins");
 
             app.UseMiddleware<TokenRevocationMiddleware>();
             //app.UseHttpsRedirection();
