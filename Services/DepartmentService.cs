@@ -2,6 +2,7 @@
 using PerformanceSurvey.iServices;
 using PerformanceSurvey.Models.DTOs;
 using PerformanceSurvey.Models;
+using PerformanceSurvey.Models.RequestDTOs.ResponseDTOs;
 
 namespace PerformanceSurvey.Services
 {
@@ -54,11 +55,12 @@ namespace PerformanceSurvey.Services
         }
 
 
-        public async Task<IEnumerable<DepartmentDto>> GetAllDepartmentsAsync()
+        public async Task<IEnumerable<DepartmentResponseDto>> GetAllDepartmentsAsync()
         {
             var departments = await _repository.GetAllDepartmentsAsync();
-            return departments.Select(d => new DepartmentDto
+            return departments.Select(d => new DepartmentResponseDto
             {
+                DepartmentId = d.DepartmentId,
                 DepartmentName = d.DepartmentName
             });
         }
