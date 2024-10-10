@@ -111,7 +111,6 @@ namespace PerformanceSurvey.Services
             var users = await _userRepository.GetAllUsersAsync(); // Only active users are returned
             return users.Select(user => new UserResponse
             {
-                UserId =user.UserId,
                 Name = user.Name,
                 UserEmail = user.UserEmail,
             });

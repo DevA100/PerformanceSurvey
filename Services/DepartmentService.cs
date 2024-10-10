@@ -55,12 +55,11 @@ namespace PerformanceSurvey.Services
         }
 
 
-        public async Task<IEnumerable<DepartmentResponseDto>> GetAllDepartmentsAsync()
+        public async Task<IEnumerable<DepartmentDto>> GetAllDepartmentsAsync()
         {
             var departments = await _repository.GetAllDepartmentsAsync();
-            return departments.Select(d => new DepartmentResponseDto
+            return departments.Select(d => new DepartmentDto
             {
-                DepartmentId = d.DepartmentId,
                 DepartmentName = d.DepartmentName
             });
         }

@@ -8,7 +8,7 @@ namespace PerformanceSurvey.iServices
     {
         Task<DepartmentDto> CreateDepartmentAsync(DepartmentDto departmentDto);
         Task<DepartmentDto> GetDepartmentByIdAsync(int id);
-        Task<IEnumerable<DepartmentResponseDto>> GetAllDepartmentsAsync();
+        Task<IEnumerable<DepartmentDto>> GetAllDepartmentsAsync();
         Task<DepartmentDto> UpdateDepartmentAsync(int id, DepartmentDto departmentDto);
         Task<bool> DisableDepartmentAsync(int id);
     }
