@@ -106,6 +106,7 @@ namespace PerformanceSurvey.Services
             // Map IEnumerable<Question> to IEnumerable<QuestionDto>
             return questions.Select(q => new QuestionDto
             {
+                QuestionId = q.QuestionId,
                 QuestionText = q.QuestionText,
                 Options = q.Options?.Select(o => new QuestionOptionDto
                 {
