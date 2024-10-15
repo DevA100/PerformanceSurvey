@@ -127,6 +127,7 @@ namespace PerformanceSurvey.Services
             var users = await _userRepository.GetUsersByDepartmentIdAsync(departmentId);
             return users.Select(user => new UserResponse
             {
+                UserId = user.UserId,
                 Name = user.Name,
                 UserEmail = user.UserEmail,
             });
