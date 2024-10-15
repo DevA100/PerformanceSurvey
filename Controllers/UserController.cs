@@ -147,7 +147,7 @@ namespace PerformanceSurvey.Controllers
         }
 
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("userByDepartmentId/{departmentId}")]
         public async Task<ActionResult<IEnumerable<UserRequest>>> GetUsersByDepartmentIdAsync(int departmentId)
         {
