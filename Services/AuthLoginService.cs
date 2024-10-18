@@ -7,6 +7,7 @@ using PerformanceSurvey.iRepository;
 using PerformanceSurvey.Repository;
 using System.Security.Cryptography;
 using System.Text;
+using PerformanceSurvey.Models.RequestDTOs;
 
 namespace PerformanceSurvey.Services
 {
@@ -132,6 +133,39 @@ namespace PerformanceSurvey.Services
         {
             await _authLoginRepository.RevokeTokenAsync(token);
         }
+
+        public async Task<bool> ChangeAdminPasswordAsync(ChangePasswordDto changePasswordDto)
+        {
+            // Fetch user by email
+            var user = await _userRepository.GetUserByEmailAsync(changePasswordDto.Email);
+
+            // Check if user exists and is an admin
+            if (user == null || user.UserType != UserType.AdminUser)
+            {
+                throw new ArgumentException("Admin user not found.");
+            }
+
+            // Verify the current password
+            var hashedCurrentPassword = HashPassword(changePasswordDto.CurrentPassword);
+            if (user.Password != hashedCurrentPassword)
+            {
+                throw new ArgumentException("Current password is incorrect.");
+            }
+
+            // Hash the new password
+            var hashedNewPassword = HashPassword(changePasswordDto.NewPassword);
+
+            // Update the user's password
+            user.Password = hashedNewPassword;
+            await _userRepository.UpdateUserPasswordAsync(user);
+
+            // Optionally, send a notification email about the password change (if needed)
+            var emailBody = $"Hello {user.Name},<br>Your password has been successfully changed.";
+            await _emailService.SendEmailAsync(user.UserEmail, "Password Changed", emailBody);
+
+            return true;
+        }
+
     }
 
 }

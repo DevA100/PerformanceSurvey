@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PerformanceSurvey.iServices;
 using PerformanceSurvey.Models.DTOs;
+using PerformanceSurvey.Models.RequestDTOs;
 
 namespace PerformanceSurvey.Controllers
 {
@@ -95,6 +97,26 @@ namespace PerformanceSurvey.Controllers
 
             return Ok("Token has been revoked");
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("ChangeAdminPassword")]
+        public async Task<IActionResult> ChangeAdminPassword([FromBody] ChangePasswordDto changePasswordDto)
+        {
+            try
+            {
+                await _authLoginService.ChangeAdminPasswordAsync(changePasswordDto);
+                return Ok(new { message = "Password changed successfully." });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "An error occurred while changing the password." });
+            }
+        }
+
 
 
     }

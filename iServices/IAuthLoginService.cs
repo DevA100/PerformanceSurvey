@@ -1,6 +1,7 @@
 ﻿using PerformanceSurvey.Models.DTOs.ResponseDTOs;
 using PerformanceSurvey.Models.DTOs;
 using PerformanceSurvey.Models;
+using PerformanceSurvey.Models.RequestDTOs;
 
 namespace PerformanceSurvey.iServices
 {
@@ -11,6 +12,6 @@ namespace PerformanceSurvey.iServices
         Task<AuthenticateAdminDto> AuthenticateAdminUserAsync(string email, string password);
 
         Task RevokeTokenAsync(string token);
-
+        Task<bool> ChangeAdminPasswordAsync(ChangePasswordDto changePasswordDto);
     }
 }

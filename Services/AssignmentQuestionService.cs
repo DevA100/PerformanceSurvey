@@ -251,10 +251,10 @@ namespace PerformanceSurvey.Services
             }
 
             // Create assignments for the single user
-            var assignments = assignmentQuestionSingleUserDto.QuestionId.Select(qId => new AssignmentQuestion
+            var assignments = questions.Select(question => new AssignmentQuestion
             {
                 UserId = assignmentQuestionSingleUserDto.UserId,
-                QuestionId = qId,
+                QuestionId = question.QuestionId, // Use the question IDs fetched from the department
                 DepartmentId = assignmentQuestionSingleUserDto.DepartmentId,
                 AssignedAt = DateTime.UtcNow
             }).ToList();

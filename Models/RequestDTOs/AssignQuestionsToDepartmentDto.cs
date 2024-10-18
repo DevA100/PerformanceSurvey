@@ -9,6 +9,5 @@
         public int TargetDepartmentId { get; set; }
 
         // List of question IDs to be assigned
-        public List<int> QuestionId { get; set; }
     }
 }
