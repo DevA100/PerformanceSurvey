@@ -301,6 +301,7 @@ namespace PerformanceSurvey.Services
             // Map questions to GetQuestionByDepartmentDto
             var questionDtos = questions.Select(q => new GetQuestionByDepartmentDto
             {
+                DepartmentId = q.DepartmentId,
                 QuestionId = q.QuestionId,
                 QuestionText = q.QuestionText,
                 Options = q.Options?.Select(o => new QuestionOptionDto
