@@ -51,6 +51,15 @@ namespace PerformanceSurvey.Repository
                 await UpdateDepartmentAsync(department);
             }
         }
+
+
+        public async Task<List<Department>> GetDepartmentsByIdsAsync(List<int> departmentIds)
+        {
+            return await _context.departments
+                .Where(d => departmentIds.Contains(d.DepartmentId))
+                .ToListAsync();
+        }
+
     }
 
 }

@@ -6,6 +6,8 @@ namespace PerformanceSurvey.Models.DTOs
     {
         [Key]
         public int QuestionId { get; set; }
+        public string DepartmentName { get; set; }
+
         public string QuestionText { get; set; }
         public int DepartmentId { get; set; }
 

@@ -16,18 +16,20 @@ namespace PerformanceSurvey.Services
         private readonly IQuestionRepository _questionRepository;
         private readonly IUserRepository _userRepository;
         private readonly IEmailService _emailService;
+        private readonly IDepartmentRepository _departmentRepository;
 
         public AssignmentQuestionService(
             IAssignmentQuestionRepository assignmentQuestionRepository,
             IQuestionRepository questionRepository,
             IUserRepository userRepository, 
-            IEmailService emailService
-            )
+            IEmailService emailService,
+            IDepartmentRepository departmentRepository)
         {
             _assignmentQuestionRepository = assignmentQuestionRepository;
             _questionRepository = questionRepository;
             _userRepository = userRepository;
             _emailService = emailService;
+            _departmentRepository = departmentRepository;
         }
 
         public async Task AssignQuestionsToMultipleUsersAsync(AssignmentQuestionMultipleDto assignmentQuestionMultipleDto)
@@ -283,37 +285,37 @@ namespace PerformanceSurvey.Services
         // Get assignment questions for a single user by UserId
         public async Task<IEnumerable<GetQuestionByDepartmentDto>> GetAssignmentQuestionsByUserIdAsync(int userId)
         {
-            // Fetch all assignments for the user
             var assignments = await _assignmentQuestionRepository.GetAssignmentByUserIdAsync(userId);
 
-            // Handle case where no assignments are found
             if (!assignments.Any())
             {
-                return new List<GetQuestionByDepartmentDto>(); // Return empty list if no assignments are found
+                return new List<GetQuestionByDepartmentDto>();
             }
 
-            // Collect all unique department IDs from the assignments
             var departmentIds = assignments.Select(a => a.DepartmentId).Distinct().ToList();
+            var departments = await _departmentRepository.GetDepartmentsByIdsAsync(departmentIds); // Fetch departments
 
-            // Fetch all questions associated with these department IDs
             var questions = await _questionRepository.GetDepartmentQuestionsByDepartmentIdsAsync(departmentIds);
 
-            // Map questions to GetQuestionByDepartmentDto
-            var questionDtos = questions.Select(q => new GetQuestionByDepartmentDto
+            var questionDtos = questions.Select(q =>
             {
-                DepartmentId = q.DepartmentId,
-                QuestionId = q.QuestionId,
-                QuestionText = q.QuestionText,
-                Options = q.Options?.Select(o => new QuestionOptionDto
+                var department = departments.FirstOrDefault(d => d.DepartmentId == q.DepartmentId);
+
+                return new GetQuestionByDepartmentDto
                 {
-                    OptionId = o.OptionId,
-                    Text = o.Text,
-                    // Map other properties if necessary
-                }).ToList()
-                // Add other mappings as needed
+                    DepartmentId = q.DepartmentId,
+                    DepartmentName = q.Department.DepartmentName,
+                    QuestionId = q.QuestionId,
+                    QuestionText = q.QuestionText,
+                    Options = q.Options?.Select(o => new QuestionOptionDto
+                    {
+                        OptionId = o.OptionId,
+                        Text = o.Text,
+                    }).ToList()
+                };
             }).ToList();
 
-            return questionDtos; // Return the list of question DTOs
+            return questionDtos;
         }
 
 

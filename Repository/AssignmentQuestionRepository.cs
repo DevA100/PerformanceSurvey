@@ -50,13 +50,14 @@ public class AssignmentQuestionRepository : IAssignmentQuestionRepository
     public async Task<IEnumerable<AssignmentQuestion>> GetAssignmentByUserIdAsync(int userId)
     {
         var assignments = await _context.assignment_Question
-    .Include(a => a.Department) // Include related Department entity
-    .Include(a => a.Question)   // Include related Question entity
-    .Where(a => a.UserId == userId) // Use Where instead of FirstOrDefault to get all matching records
-    .ToListAsync();
+            .Include(a => a.Department) // Include related Department entity
+            .Include(a => a.Question)   // Include related Question entity
+            .Where(a => a.UserId == userId) // Fetch all matching records for the user
+            .ToListAsync();
 
         return assignments;
     }
+
 
     public async Task<IEnumerable<AssignmentQuestion>> GetAssignmentByUserIdsAsync(IEnumerable<int> userIds)
     {
