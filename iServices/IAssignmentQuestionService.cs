@@ -13,5 +13,6 @@ namespace PerformanceSurvey.iServices
         Task<IEnumerable<GetQuestionByDepartmentDto>> GetAssignmentQuestionsByUserIdAsync(int userId);
 
         Task<IEnumerable<GetQuestionByDepartmentDto>> GetAssignmentQuestionsByUserIdsAsync(IEnumerable<int> userIds);
+        Task DeleteAnsweredAssignmentQuestionsByUserIdAsync(int userId);
     }
 }

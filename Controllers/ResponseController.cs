@@ -13,7 +13,7 @@ public class ResponsesController : ControllerBase
     {
         _responseService = responseService;
     }
-    [Authorize(Roles = "Users")]
+    [Authorize(Roles = "User")]
     [HttpPost("saveMultipleChoiceResponse")]
     public async Task<IActionResult> SaveResponse([FromBody] SaveMultipleChoiceResponseDto dto)
     {
@@ -27,7 +27,7 @@ public class ResponsesController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
-    [Authorize(Roles = "Users")]
+    [Authorize(Roles = "User")]
     [HttpPost("saveTextResponse")]
     public async Task<IActionResult> SaveTextResponse([FromBody] SaveTextResponseDto textResponseDto)
     {

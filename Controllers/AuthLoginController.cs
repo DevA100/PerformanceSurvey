@@ -19,23 +19,23 @@ namespace PerformanceSurvey.Controllers
             _logger = logger;
         }
 
-        [HttpPost("Adminlogin")]
-        public async Task<IActionResult> Adminlogin([FromBody] LoginDto loginDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[HttpPost("Adminlogin")]
+        //public async Task<IActionResult> Adminlogin([FromBody] LoginDto loginDto)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            var adminUser = await _authLoginService.AuthenticateAdminUserAsync(loginDto.UserEmail, loginDto.Password);
+        //    var adminUser = await _authLoginService.AuthenticateAdminUserAsync(loginDto.UserEmail, loginDto.Password);
 
-            if (adminUser == null)
-            {
-                return Unauthorized("Invalid email or password.");
-            }
+        //    if (adminUser == null)
+        //    {
+        //        return Unauthorized("Invalid email or password.");
+        //    }
 
-            return Ok(adminUser); // This can be modified to include a token if authentication is extended
-        }
+        //    return Ok(adminUser); // This can be modified to include a token if authentication is extended
+        //}
 
 
 
@@ -64,25 +64,42 @@ namespace PerformanceSurvey.Controllers
         }
 
 
+        //[HttpPost("login")]
+        //public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        //{
+        //    // Step 1: Validate input
+        //    if (string.IsNullOrEmpty(loginDto.UserEmail) || string.IsNullOrEmpty(loginDto.Password))
+        //    {
+        //        return BadRequest("Email and password are required.");
+        //    }
+
+        //    // Step 2: Authenticate the user
+        //    var user = await _authLoginService.AuthenticateUserAsync(loginDto.UserEmail, loginDto.Password);
+        //    if (user == null)
+        //    {
+        //        return Unauthorized("Invalid email or password.");
+        //    }
+
+        //    // Step 3: Return success response (optionally generate and return a JWT token)
+        //    return Ok(user);
+        //}
+
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            // Step 1: Validate input
-            if (string.IsNullOrEmpty(loginDto.UserEmail) || string.IsNullOrEmpty(loginDto.Password))
+            var result = await _authLoginService.AuthenticateAsync(loginDto.UserEmail, loginDto.Password);
+
+            if (result == null)
             {
-                return BadRequest("Email and password are required.");
+                return Unauthorized(new { message = "Invalid credentials" }); // This response is correct for invalid credentials
             }
 
-            // Step 2: Authenticate the user
-            var user = await _authLoginService.AuthenticateUserAsync(loginDto.UserEmail, loginDto.Password);
-            if (user == null)
-            {
-                return Unauthorized("Invalid email or password.");
-            }
-
-            // Step 3: Return success response (optionally generate and return a JWT token)
-            return Ok(user);
+            return Ok(result); // Return the successful authentication response
         }
+
+
+
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromHeader(Name = "Authorization")] string token)

@@ -12,5 +12,9 @@ namespace PerformanceSurvey.iRepository
         Task<IEnumerable<AssignmentQuestion>> GetAssignmentByUserIdAsync(int  userId);
 
         Task<IEnumerable<AssignmentQuestion>> GetAssignmentByUserIdsAsync(IEnumerable<int> userIds);
+        Task DeleteAssignmentsAsync(IEnumerable<AssignmentQuestion> assignments);
+        Task<AssignmentQuestion> GetAssignmentByUserAndQuestionAsync(int userId, int questionId);
+        Task UpdateAsync(AssignmentQuestion assignment);
+
     }
 }

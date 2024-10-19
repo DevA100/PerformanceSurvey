@@ -352,6 +352,20 @@ namespace PerformanceSurvey.Services
             return questionDtos;
         }
 
+        public async Task DeleteAnsweredAssignmentQuestionsByUserIdAsync(int userId)
+        {
+            // Fetch all assignments for the user
+            var assignments = await _assignmentQuestionRepository.GetAssignmentByUserIdAsync(userId);
+
+            // Filter out assignments where the question status is 'answered' (status = 1)
+            var answeredAssignments = assignments.Where(a => a.status == 1).ToList();
+
+            // If there are any answered assignments, delete them
+            if (answeredAssignments.Any())
+            {
+                await _assignmentQuestionRepository.DeleteAssignmentsAsync(answeredAssignments);
+            }
+        }
 
 
 

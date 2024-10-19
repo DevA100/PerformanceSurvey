@@ -12,10 +12,12 @@ namespace PerformanceSurvey.Services
     {
         private readonly IResponseRepository _responseRepository;
         private readonly IQuestionRepository _questionRepository;
-        public ResponseService(IResponseRepository responseRepository, IQuestionRepository questionRepository)
+        private readonly IAssignmentQuestionRepository _assignmentQuestionRepository;
+        public ResponseService(IResponseRepository responseRepository, IQuestionRepository questionRepository, IAssignmentQuestionRepository assignmentQuestionRepository)
         {
             _responseRepository = responseRepository;
             _questionRepository = questionRepository;
+            _assignmentQuestionRepository = assignmentQuestionRepository;
         }
 
         public async Task SaveResponseAsync(SaveMultipleChoiceResponseDto dto)
@@ -23,10 +25,10 @@ namespace PerformanceSurvey.Services
             // Fetch the existing QuestionOption from the database if OptionId is provided
             QuestionOption? questionOption = null;
 
-            if (dto.OptionId.HasValue)
+            if (dto.OptionId != 0)
             {
                 // Fetch the QuestionOption from the repository using the option ID from the DTO
-                 questionOption = await _questionRepository.GetOptionByIdAsync(dto.OptionId.Value);
+                 questionOption = await _questionRepository.GetOptionByIdAsync(dto.OptionId);
 
                 // Check if the QuestionOption exists and is valid
                 if (questionOption == null || questionOption.QuestionId != dto.QuestionId)
@@ -39,14 +41,48 @@ namespace PerformanceSurvey.Services
             var response = new Response
             {
                 QuestionId = dto.QuestionId,
+                UserId = dto.UserId,
                 DepartmentId = dto.DepartmentId,
-                QuestionOption = questionOption, // Set to the fetched QuestionOption
-                CreatedAt = DateTime.UtcNow
+                QuestionOption = questionOption,
+                CreatedAt = DateTime.UtcNow,
+                Score = CalculateScore(dto) // Set the score based on your logic
             };
 
             // Save the response using the repository
             await _responseRepository.SaveAsync(response);
+
+            // Update the assignment status for the user and question
+            await UpdateAssignmentStatusAsync(dto.UserId, dto.QuestionId);
+
+
         }
+        private async Task UpdateAssignmentStatusAsync(int userId, int questionId)
+        {
+            // Fetch the assignment for the user and question
+            var assignment = await _assignmentQuestionRepository.GetAssignmentByUserAndQuestionAsync(userId, questionId);
+
+            if (assignment != null)
+            {
+                assignment.status = 1; // Mark as answered
+                await _assignmentQuestionRepository.UpdateAsync(assignment);
+            }
+        }
+
+        private int CalculateScore(SaveMultipleChoiceResponseDto dto)
+        {
+            // Implement your logic here to determine the score.
+            // For example, if the score is based on the selected option:
+            var option = _questionRepository.GetOptionByIdAsync(dto.OptionId).Result;
+            if (option != null)
+            {
+                // Example logic: return a score based on option properties
+                return option.Score; // Assuming option has a ScoreValue field
+            }
+            // Return a default value if no logic applies
+            return 0;
+        }
+
+
 
         public async Task<SaveTextResponseDto> SaveTextResponseAsync(SaveTextResponseDto textResponseDto)
         {
@@ -64,9 +100,12 @@ namespace PerformanceSurvey.Services
             var savedResponse = await _responseRepository.AddAsync(textResponse);
 
             // Update the DTO with the generated ResponseId from the saved entity
-            
+            await UpdateAssignmentStatusAsync(textResponseDto.UserId, textResponseDto.QuestionId);
 
             return textResponseDto;
+
+            
+
         }
 
 

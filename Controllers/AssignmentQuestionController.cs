@@ -177,7 +177,20 @@ namespace PerformanceSurvey.Controllers
             }
         }
 
-
+        [HttpDelete("DeleteAnsweredQuestions/{userId}")]
+        public async Task<IActionResult> DeleteAnsweredQuestions(int userId)
+        {
+            try
+            {
+                await _assignmentQuestionService.DeleteAnsweredAssignmentQuestionsByUserIdAsync(userId);
+                return Ok(200); // Return 204 No Content if deletion is successful
+            }
+            catch (Exception ex)
+            {
+                // Log the error if necessary
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
 
     }
 

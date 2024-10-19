@@ -63,58 +63,111 @@ namespace PerformanceSurvey.Services
         }
 
 
-        public async Task<AuthenticateAdminDto> AuthenticateAdminUserAsync(string email, string password)
+
+        public async Task<AuthenticateAdminDto> AuthenticateAsync(string email, string password)
         {
-            // Fetch user by email
+            // Fetch the user by email
             var user = await _userRepository.GetUserByEmailAsync(email);
-            if (user == null || user.UserType != UserType.AdminUser)
+            if (user == null)
             {
-                return null; // Return null if user is not found or not an admin
+                return null; // Return null if the user does not exist
             }
 
             // Verify the password
             var hashedInputPassword = HashPassword(password);
             if (user.Password != hashedInputPassword)
             {
-                return null; // Return null if password does not match
+                return null; // Return null if the password does not match
             }
 
-            var token = _jwtTokenUtil.GenerateToken(email, "Admin");
-            // Return user DTO
-            return new AuthenticateAdminDto
+            // Determine the role based on the UserType property
+            string role;
+            if (user.UserType == UserType.AdminUser)
             {
-                Token = token,
-                IssuedOn = DateTime.UtcNow,
-                ExpiredAt = DateTime.UtcNow .AddMinutes(60),
-            };
-        }
-
-        public async Task<AuthenticateAdminDto> AuthenticateUserAsync(string email, string password)
-        {
-            // Step 1: Retrieve the user by email
-            var user = await _userRepository.GetUserByEmailAsync(email);
-            if (user == null || user.UserType == UserType.AdminUser)
+                role = "Admin";
+            }
+            else if (user.UserType == UserType.User)
             {
-                return null; // User not found
+                role = "User";
+            }
+            else
+            {
+                return null; // Return null if the user type is not recognized
             }
 
-            // Step 2: Verify the password by hashing the input and comparing it with the stored hash
-            var hashedInputPassword = HashPassword(password);
-            if (user.Password != hashedInputPassword)
-            {
-                return null; // Password does not match
-            }
+            // Generate a token with the user's role
+            var token = _jwtTokenUtil.GenerateToken(email, role);
 
-            var token = _jwtTokenUtil.GenerateToken(email, "Users");
-
-            // Step 3: Return the user if authentication is successful
+            // Return the response DTO with the token, expiration, and role information
             return new AuthenticateAdminDto
             {
                 Token = token,
                 IssuedOn = DateTime.UtcNow,
                 ExpiredAt = DateTime.UtcNow.AddMinutes(60),
+                Role = role
             };
         }
+
+
+
+
+
+
+
+
+
+        //public async Task<AuthenticateAdminDto> AuthenticateAdminUserAsync(string email, string password)
+        //{
+        //    // Fetch user by email
+        //    var user = await _userRepository.GetUserByEmailAsync(email);
+        //    if (user == null || user.UserType != UserType.AdminUser)
+        //    {
+        //        return null; // Return null if user is not found or not an admin
+        //    }
+
+        //    // Verify the password
+        //    var hashedInputPassword = HashPassword(password);
+        //    if (user.Password != hashedInputPassword)
+        //    {
+        //        return null; // Return null if password does not match
+        //    }
+
+        //    var token = _jwtTokenUtil.GenerateToken(email, "Admin");
+        //    // Return user DTO
+        //    return new AuthenticateAdminDto
+        //    {
+        //        Token = token,
+        //        IssuedOn = DateTime.UtcNow,
+        //        ExpiredAt = DateTime.UtcNow .AddMinutes(60),
+        //    };
+        //}
+
+        //public async Task<AuthenticateAdminDto> AuthenticateUserAsync(string email, string password)
+        //{
+        //    // Step 1: Retrieve the user by email
+        //    var user = await _userRepository.GetUserByEmailAsync(email);
+        //    if (user == null || user.UserType == UserType.AdminUser)
+        //    {
+        //        return null; // User not found
+        //    }
+
+        //    // Step 2: Verify the password by hashing the input and comparing it with the stored hash
+        //    var hashedInputPassword = HashPassword(password);
+        //    if (user.Password != hashedInputPassword)
+        //    {
+        //        return null; // Password does not match
+        //    }
+
+        //    var token = _jwtTokenUtil.GenerateToken(email, "Users");
+
+        //    // Step 3: Return the user if authentication is successful
+        //    return new AuthenticateAdminDto
+        //    {
+        //        Token = token,
+        //        IssuedOn = DateTime.UtcNow,
+        //        ExpiredAt = DateTime.UtcNow.AddMinutes(60),
+        //    };
+        //}
 
         // HashPassword method should be the same as the one used during password generation
         private string HashPassword(string password)

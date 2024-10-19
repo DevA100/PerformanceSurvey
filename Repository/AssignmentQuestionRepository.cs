@@ -69,4 +69,22 @@ public class AssignmentQuestionRepository : IAssignmentQuestionRepository
 
         return assignments;
     }
+    public async Task DeleteAssignmentsAsync(IEnumerable<AssignmentQuestion> assignments)
+    {
+        _context.assignment_Question.RemoveRange(assignments);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateAsync(AssignmentQuestion assignment)
+    {
+        _context.assignment_Question.Update(assignment); // Assuming 'assignment_Question' is your DbSet
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<AssignmentQuestion> GetAssignmentByUserAndQuestionAsync(int userId, int questionId)
+    {
+        return await _context.assignment_Question
+            .FirstOrDefaultAsync(a => a.UserId == userId && a.QuestionId == questionId);
+    }
+
 }
