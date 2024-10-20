@@ -104,7 +104,8 @@ namespace PerformanceSurvey.Services
                 Token = token,
                 IssuedOn = DateTime.UtcNow,
                 ExpiredAt = DateTime.UtcNow.AddMinutes(60),
-                Role = role
+                Role = role,
+                UserId = user.UserId
             };
         }
 
